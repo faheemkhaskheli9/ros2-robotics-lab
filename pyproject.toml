@@ -1,0 +1,5 @@
+[project]
+name = "ros2-robotics-lab"
+version = "0.1.0"
+description = "ROS2 Robotics Fundamentals"
+requires-python = ">=3.10"
