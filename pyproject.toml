@@ -3,3 +3,23 @@ name = "ros2-robotics-lab"
 version = "0.1.0"
 description = "ROS2 Robotics Fundamentals"
 requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+# Native ROS2 (rclpy) is installed from a ROS2 distro, not PyPI, so it is not
+# listed here. Install it via your ROS2 setup to run the nodes under `ros2 run`.
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+ros2-robotics-lab = "ros2_robotics_lab.cli:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

@@ -1,1 +1,6 @@
-# Fill in with the exact package versions used once implementation starts.
+# Runtime: the demos run on the Python standard library alone (in-process bus
+# fallback). Native ROS2 support activates automatically when `rclpy` is present,
+# which is provided by a ROS2 distribution install rather than PyPI.
+
+# Dev / test
+pytest>=7.0
