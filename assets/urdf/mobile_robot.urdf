@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<!--
+  Simulated two-wheeled differential-drive mobile robot with a fixed-mount
+  2D lidar. Kept plain URDF (no xacro macros) so it can be parsed with the
+  standard library's xml.etree, no ROS2/xacro toolchain required, and still
+  loads cleanly in Gazebo/RViz once one is available.
+
+  Structure: base_link (chassis) -> {left_wheel, right_wheel} via continuous
+  joints, base_link -> caster_wheel via a fixed joint (unpowered support
+  wheel), base_link -> lidar_link via a fixed joint (the required sensor
+  mount for this issue).
+-->
+<robot name="mobile_robot">
+
+  <material name="chassis_grey">
+    <color rgba="0.5 0.5 0.5 1.0"/>
+  </material>
+  <material name="wheel_black">
+    <color rgba="0.1 0.1 0.1 1.0"/>
+  </material>
+  <material name="lidar_orange">
+    <color rgba="0.9 0.4 0.1 1.0"/>
+  </material>
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.30 0.20 0.10"/>
+      </geometry>
+      <material name="chassis_grey"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.30 0.20 0.10"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="2.0"/>
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.02" iyz="0.0" izz="0.02"/>
+    </inertial>
+  </link>
+
+  <link name="left_wheel">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.03"/>
+      </geometry>
+      <material name="wheel_black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.05" length="0.03"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.2"/>
+      <inertia ixx="0.0002" ixy="0.0" ixz="0.0" iyy="0.0002" iyz="0.0" izz="0.0003"/>
+    </inertial>
+  </link>
+
+  <joint name="left_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
+    <origin xyz="0 0.12 -0.03" rpy="1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <link name="right_wheel">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.03"/>
+      </geometry>
+      <material name="wheel_black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.05" length="0.03"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.2"/>
+      <inertia ixx="0.0002" ixy="0.0" ixz="0.0" iyy="0.0002" iyz="0.0" izz="0.0003"/>
+    </inertial>
+  </link>
+
+  <joint name="right_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_wheel"/>
+    <origin xyz="0 -0.12 -0.03" rpy="1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <link name="caster_wheel">
+    <visual>
+      <geometry>
+        <sphere radius="0.025"/>
+      </geometry>
+      <material name="wheel_black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.025"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.05"/>
+      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001"/>
+    </inertial>
+  </link>
+
+  <joint name="caster_wheel_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster_wheel"/>
+    <origin xyz="0.12 0 -0.05" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Required sensor link: a 2D lidar mounted on top of the chassis. -->
+  <link name="lidar_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.03" length="0.04"/>
+      </geometry>
+      <material name="lidar_orange"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.03" length="0.04"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.00005" ixy="0.0" ixz="0.0" iyy="0.00005" iyz="0.0" izz="0.00005"/>
+    </inertial>
+    <sensor name="lidar" type="ray">
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal samples="360" resolution="1" min_angle="-3.14159" max_angle="3.14159"/>
+        </scan>
+        <range min="0.12" max="10.0" resolution="0.01"/>
+      </ray>
+    </sensor>
+  </link>
+
+  <joint name="lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="lidar_link"/>
+    <origin xyz="0.05 0 0.09" rpy="0 0 0"/>
+  </joint>
+
+</robot>
